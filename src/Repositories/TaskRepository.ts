@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../PrismaService';
-import { Prisma } from '@prisma/client';
+import { Prisma,Task } from '@prisma/client';
 
 @Injectable()
 export default class TaskRepository {
@@ -24,9 +24,24 @@ export default class TaskRepository {
       | Prisma.XOR<Prisma.TaskUpdateInput, Prisma.TaskUncheckedUpdateInput>,
   ) {
     if (!data.id) {
-      // @todo IMPLEMENT HERE USING PRISMA API
+      return await this.prisma.task.create({
+          data: data as Prisma.TaskCreateInput,
+          });
     }
+    // si pas de id, on fait un create
+    // sinon on fait un update
 
-    // @todo IMPLEMENT HERE USING PRISMA API
-  }
+    const { id, ...updateData } = data as Prisma.TaskUncheckedCreateInput;
+    return await this.prisma.task.update({
+        where: { id },
+        data: updateData,
+        });
+      }
+
+  async update(id: number, data: Prisma.TaskUpdateInput): Promise<Task> {
+    return this.prisma.task.update({
+       where: { id },
+        data,
+      });    
+    }
 }
