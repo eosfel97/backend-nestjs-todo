@@ -25,11 +25,20 @@ export default class TaskController {
 
   @Post('/tasks')
   async create(@Body() dto: SaveTaskDto) {
+
+    const data = { ...dto } as any;
+    if (!data.priority) {
+      data.priority = 'MEDIUM';
+    }
     return ( await this.useCaseFactory.create(SaveTaskUseCase)).handle(dto);
   }
 
   @Patch('/tasks/:id')
   async update(@Param('id') id: string, @Body() dto: SaveTaskDto) {
+    const data = { ...dto} as any;
+    if (!data.priority) {
+      data.priority = 'MEDIUM';
+    }
       return ( await this.useCaseFactory.create(SaveTaskUseCase)).handle({id: Number(id), ...dto});
 
   }
